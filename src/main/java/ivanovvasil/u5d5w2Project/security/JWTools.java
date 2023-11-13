@@ -3,7 +3,7 @@ package ivanovvasil.u5d5w2Project.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import ivanovvasil.u5d5w2Project.entities.User;
-import ivanovvasil.u5d5w2Project.exceptions.AnauthorizedException;
+import ivanovvasil.u5d5w2Project.exceptions.AccesDeniedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,15 +17,12 @@ public class JWTools {
 
 
   public String createToken(User user) {
-    try {
-      return Jwts.builder().setSubject(String.valueOf(user.getId()))
-              .setIssuedAt(new Date(System.currentTimeMillis()))
-              .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
-              .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
-              .compact();
-    } catch (Exception e) {
-      throw new AnauthorizedException("Invalid acces token!");
-    }
+    return Jwts.builder().setSubject(String.valueOf(user.getId()))
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
+            .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+            .compact();
+
   }
 
   public String extractIdFromToken(String token) {
@@ -38,8 +35,9 @@ public class JWTools {
       Jwts.parserBuilder()
               .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
               .build().parse(token);
-    } catch (AnauthorizedException e) {
-      throw new AnauthorizedException("Invalid acces token!");
+    } catch (Exception e) {
+      throw new AccesDeniedException("Invalid acces token!");
+
     }
   }
 }

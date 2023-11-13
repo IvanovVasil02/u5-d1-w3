@@ -39,10 +39,9 @@ public class ExceptionsHandler {
     return new ErrorsResponseDTO(e.getMessage(), new Date());
   }
 
-  @ExceptionHandler(AnauthorizedException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ErrorsResponseDTO handleAnauthorized(AnauthorizedException e) {
-    e.printStackTrace();
+  @ExceptionHandler(AccesDeniedException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public ErrorsResponseDTO handleAnauthorized(AccesDeniedException e) {
     return new ErrorsResponseDTO(e.getMessage(), new Date());
   }
 

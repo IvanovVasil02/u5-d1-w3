@@ -32,9 +32,10 @@ public class UsersService {
   private Cloudinary cloudinary;
 
   //findALl for employees runner
-  public User saveRunnerEmployee(User user) {
-    return usersRepository.save(user);
+  public User saveRunnerUser(User employee) {
+    return usersRepository.save(employee);
   }
+
 
   public User save(NewUserDTO body) throws IOException {
     usersRepository.findByEmail(body.email()).ifPresent(author -> {
@@ -44,6 +45,7 @@ public class UsersService {
     newUser.setName(body.name());
     newUser.setSurname(body.surname());
     newUser.setEmail(body.email());
+    newUser.setPassword(newUser.getPassword());
     if (body.profilePicture() != null) {
       newUser.setProfilePicture(body.profilePicture());
     } else {
@@ -71,7 +73,7 @@ public class UsersService {
   }
 
   public void findByIdAndDelete(int id) throws NotFoundException {
-    List<Device> devicesList = devicesRepository.findAllByEmployeeId(id);
+    List<Device> devicesList = devicesRepository.findAllByUserId(id);
     devicesList.forEach(device -> {
       device.setDeviceStatus(DeviceStatus.AVAILABLE);
       device.setUser(null);

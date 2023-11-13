@@ -18,6 +18,6 @@ public record NewPutDeviceDTO(
                         "AVAILABLE, ASSIGNED, UNDER_MAINTENANCE, DECOMMISSIONED")
         String deviceStatus,
 
-        Integer employee
+        Integer user
 ) {
 }

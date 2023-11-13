@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface DevicesRepository extends JpaRepository<Device, Integer> {
-  @Query("SELECT d FROM Device d WHERE d.employee.id = :id")
-  List<Device> findAllByEmployeeId(int id);
+  @Query("SELECT d FROM Device d WHERE d.user.id = :id")
+  List<Device> findAllByUserId(int id);
 
 }

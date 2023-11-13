@@ -20,8 +20,7 @@ import java.io.IOException;
 public class UserController {
   @Autowired
   private UsersService usersService;
-
-
+  
   @GetMapping("")
   public Page<User> getAll(@RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "15") int size,

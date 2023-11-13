@@ -1,7 +1,7 @@
 package ivanovvasil.u5d5w2Project.controllers;
 
 import ivanovvasil.u5d5w2Project.entities.User;
-import ivanovvasil.u5d5w2Project.exceptions.AnauthorizedException;
+import ivanovvasil.u5d5w2Project.exceptions.AccesDeniedException;
 import ivanovvasil.u5d5w2Project.exceptions.BadRequestException;
 import ivanovvasil.u5d5w2Project.payloads.NewUserDTO;
 import ivanovvasil.u5d5w2Project.payloads.UserLoggedTokenDTO;
@@ -32,7 +32,7 @@ public class UserAunthenticationController {
     } else {
       try {
         return new UserLoggedTokenDTO(authenticationService.authenticateUser(body));
-      } catch (AnauthorizedException e) {
+      } catch (AccesDeniedException e) {
         throw new RuntimeException(e);
       }
     }

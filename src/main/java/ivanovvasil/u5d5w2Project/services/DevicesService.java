@@ -16,13 +16,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class DevicesService {
   @Autowired
   private DevicesRepository devicesRepository;
   @Autowired
-  private UsersService employesServices;
+  private UsersService usersService;
 
   //to save blog post whit runner
   public Device saveDeviceRunner(Device body) {
@@ -42,6 +43,10 @@ public class DevicesService {
     return devicesRepository.findAll(pageable);
   }
 
+  public List<Device> findAllById(int id) {
+    return devicesRepository.findAllByUserId(id);
+  }
+
   public Device findById(int id) throws NotFoundException {
     return devicesRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
   }
@@ -55,8 +60,8 @@ public class DevicesService {
     found.setDeviceType(DeviceType.valueOf(body.deviceType()));
     found.setModel(body.model());
     found.setDeviceStatus(DeviceStatus.valueOf(body.deviceStatus()));
-    if (body.employee() != null) {
-      User user = employesServices.findById(body.employee());
+    if (body.user() != null) {
+      User user = usersService.findById(body.user());
       found.setUser(user);
     }
     return devicesRepository.save(found);

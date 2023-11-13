@@ -16,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Builder(builderClassName = "EmployeeBuilder")
+@Builder(builderClassName = "UsersBuilder")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class User {
     return id == user.id && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(profilePicture, user.profilePicture);
   }
 
-  public static class EmployeeBuilder {
+  public static class UsersBuilder {
     Faker f = new Faker(Locale.ITALY);
     private String name = f.name().name();
     private String surname = f.name().lastName();
