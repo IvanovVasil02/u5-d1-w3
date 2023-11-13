@@ -1,5 +1,6 @@
 package ivanovvasil.u5d5w2Project.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +8,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+  @Autowired
+  private JWTAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -18,7 +23,7 @@ public class SecurityConfig {
     httpSecurity.csrf(AbstractHttpConfigurer::disable);
     httpSecurity.formLogin(AbstractHttpConfigurer::disable);
     httpSecurity.authorizeHttpRequests(request -> request.requestMatchers("/**").permitAll());
-
+    httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return httpSecurity.build();
   }
 }

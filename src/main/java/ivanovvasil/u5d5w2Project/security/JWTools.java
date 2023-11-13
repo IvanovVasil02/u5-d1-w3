@@ -15,6 +15,7 @@ public class JWTools {
   @Value("${spring.jwt.secret}")
   private String secret;
 
+
   public String createToken(User user) {
     try {
       return Jwts.builder().setSubject(String.valueOf(user.getId()))
@@ -23,7 +24,22 @@ public class JWTools {
               .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
               .compact();
     } catch (Exception e) {
-      throw new AnauthorizedException("Invalid acces token");
+      throw new AnauthorizedException("Invalid acces token!");
+    }
+  }
+
+  public String extractIdFromToken(String token) {
+    return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+            .build().parseClaimsJws(token).getBody().getSubject();
+  }
+
+  public void verifyToken(String token) {
+    try {
+      Jwts.parserBuilder()
+              .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+              .build().parse(token);
+    } catch (AnauthorizedException e) {
+      throw new AnauthorizedException("Invalid acces token!");
     }
   }
 }
