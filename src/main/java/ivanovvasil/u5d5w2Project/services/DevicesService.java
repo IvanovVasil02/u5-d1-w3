@@ -1,7 +1,7 @@
 package ivanovvasil.u5d5w2Project.services;
 
 import ivanovvasil.u5d5w2Project.entities.Device;
-import ivanovvasil.u5d5w2Project.entities.Employee;
+import ivanovvasil.u5d5w2Project.entities.User;
 import ivanovvasil.u5d5w2Project.enums.DeviceStatus;
 import ivanovvasil.u5d5w2Project.enums.DeviceType;
 import ivanovvasil.u5d5w2Project.exceptions.NotFoundException;
@@ -22,7 +22,7 @@ public class DevicesService {
   @Autowired
   private DevicesRepository devicesRepository;
   @Autowired
-  private EmployeesService employesServices;
+  private UsersService employesServices;
 
   //to save blog post whit runner
   public Device saveDeviceRunner(Device body) {
@@ -56,8 +56,8 @@ public class DevicesService {
     found.setModel(body.model());
     found.setDeviceStatus(DeviceStatus.valueOf(body.deviceStatus()));
     if (body.employee() != null) {
-      Employee employee = employesServices.findById(body.employee());
-      found.setEmployee(employee);
+      User user = employesServices.findById(body.employee());
+      found.setUser(user);
     }
     return devicesRepository.save(found);
   }

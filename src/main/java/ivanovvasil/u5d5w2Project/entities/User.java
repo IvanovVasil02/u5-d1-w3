@@ -17,28 +17,30 @@ import java.util.Objects;
 @Setter
 @ToString
 @Builder(builderClassName = "EmployeeBuilder")
-public class Employee {
+public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String name;
   private String surname;
   private String email;
+  private String password;
   private String profilePicture;
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Employee employee = (Employee) o;
-    return id == employee.id && Objects.equals(name, employee.name) && Objects.equals(surname, employee.surname) && Objects.equals(email, employee.email) && Objects.equals(profilePicture, employee.profilePicture);
+    User user = (User) o;
+    return id == user.id && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(profilePicture, user.profilePicture);
   }
-  
+
   public static class EmployeeBuilder {
     Faker f = new Faker(Locale.ITALY);
     private String name = f.name().name();
     private String surname = f.name().lastName();
     private String email = f.internet().emailAddress();
+    private String password = f.internet().password();
     private String profilePicture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTC0HlQ_ckX6HqCAlqroocyRDx_ZRu3x3ezoA&usqp=CAU";
   }
 }

@@ -1,10 +1,10 @@
 package ivanovvasil.u5d5w2Project.controllers;
 
-import ivanovvasil.u5d5w2Project.entities.Employee;
+import ivanovvasil.u5d5w2Project.entities.User;
 import ivanovvasil.u5d5w2Project.exceptions.BadRequestException;
-import ivanovvasil.u5d5w2Project.payloads.NewEmployeeDTO;
-import ivanovvasil.u5d5w2Project.payloads.NewPutEmployeeDTO;
-import ivanovvasil.u5d5w2Project.services.EmployeesService;
+import ivanovvasil.u5d5w2Project.payloads.NewPutUserDTO;
+import ivanovvasil.u5d5w2Project.payloads.NewUserDTO;
+import ivanovvasil.u5d5w2Project.services.UsersService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,18 +19,18 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/employees")
-public class EmployeeController {
+public class UserController {
   @Autowired
-  private EmployeesService employeesService;
+  private UsersService usersService;
 
   @PostMapping("")
   @ResponseStatus(HttpStatus.CREATED)
-  public Employee saveEmployee(@RequestBody @Validated @Valid NewEmployeeDTO body, BindingResult validation) {
+  public User saveEmployee(@RequestBody @Validated @Valid NewUserDTO body, BindingResult validation) {
     if (validation.hasErrors()) {
       throw new BadRequestException("Empty or not respected fields", validation.getAllErrors());
     } else {
       try {
-        return employeesService.save(body);
+        return usersService.save(body);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -38,25 +38,25 @@ public class EmployeeController {
   }
 
   @GetMapping("")
-  public Page<Employee> getAll(@RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "15") int size,
-                               @RequestParam(defaultValue = "id") String orderBy) {
-    return employeesService.findAll(page, size, orderBy);
+  public Page<User> getAll(@RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "15") int size,
+                           @RequestParam(defaultValue = "id") String orderBy) {
+    return usersService.findAll(page, size, orderBy);
   }
 
 
   @GetMapping("/{id}")
-  public Employee findById(@PathVariable int id) {
-    return employeesService.findById(id);
+  public User findById(@PathVariable int id) {
+    return usersService.findById(id);
   }
 
   @PutMapping("/{id}")
-  public Employee findByIdAndUpdate(@PathVariable int id, @RequestBody @Validated NewPutEmployeeDTO body, BindingResult validation) {
+  public User findByIdAndUpdate(@PathVariable int id, @RequestBody @Validated NewPutUserDTO body, BindingResult validation) {
     if (validation.hasErrors()) {
       throw new BadRequestException("Empty or not respected fields", validation.getAllErrors());
     } else {
       try {
-        return employeesService.findByIdAndUpdate(id, body);
+        return usersService.findByIdAndUpdate(id, body);
       } catch (MethodArgumentTypeMismatchException e) {
         throw new BadRequestException("Entered id is invalid");
       } catch (IOException e) {
@@ -67,14 +67,14 @@ public class EmployeeController {
   }
 
   @PostMapping("/{id}/uploadImg")
-  public Employee uploadImg(@PathVariable int id,
-                            @RequestParam("profileImg") MultipartFile body) throws IOException {
-    return employeesService.uploadImg(id, body);
+  public User uploadImg(@PathVariable int id,
+                        @RequestParam("profileImg") MultipartFile body) throws IOException {
+    return usersService.uploadImg(id, body);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void findByIdAndDelete(@PathVariable int id) {
-    employeesService.findByIdAndDelete(id);
+    usersService.findByIdAndDelete(id);
   }
 }

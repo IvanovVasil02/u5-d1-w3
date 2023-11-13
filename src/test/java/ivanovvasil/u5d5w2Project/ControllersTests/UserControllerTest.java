@@ -1,12 +1,12 @@
 package ivanovvasil.u5d5w2Project;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ivanovvasil.u5d5w2Project.controllers.EmployeeController;
-import ivanovvasil.u5d5w2Project.entities.Employee;
+import ivanovvasil.u5d5w2Project.controllers.UserController;
+import ivanovvasil.u5d5w2Project.entities.User;
 import ivanovvasil.u5d5w2Project.exceptions.NotFoundException;
-import ivanovvasil.u5d5w2Project.payloads.NewEmployeeDTO;
-import ivanovvasil.u5d5w2Project.payloads.NewPutEmployeeDTO;
-import ivanovvasil.u5d5w2Project.services.EmployeesService;
+import ivanovvasil.u5d5w2Project.payloads.NewPutUserDTO;
+import ivanovvasil.u5d5w2Project.payloads.NewUserDTO;
+import ivanovvasil.u5d5w2Project.services.UsersService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +20,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WebMvcTest(EmployeeController.class)
-public class EmployeeControllerTest {
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
   private static final String ENDPOINT = "/employees";
-  Employee employee = Employee.builder().id(2).name("Vasil").surname("Ivanov").email("vsa@vsa.com").build();
+  User user = User.builder().id(2).name("Vasil").surname("Ivanov").email("vsa@vsa.com").build();
   @Autowired
   private MockMvc mockMvc;
   @Autowired
   private ObjectMapper objectMapper;
   @MockBean
-  private EmployeesService employeesService;
+  private UsersService usersService;
 
   @Test
   public void testSaveWrongsEmployeerReturnBadRequest() throws Exception {
-    NewEmployeeDTO newEmployeeDTO = new NewEmployeeDTO("", "ivanov", "asd@asdasd.com", "asd");
+    NewUserDTO newUserDTO = new NewUserDTO("", "ivanov", "asd@asdasd.com", "asd");
 
-    String requestBody = objectMapper.writeValueAsString(newEmployeeDTO);
+    String requestBody = objectMapper.writeValueAsString(newUserDTO);
     mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody))
@@ -44,9 +44,9 @@ public class EmployeeControllerTest {
 
   @Test
   public void testSaveEmployeerReturn201() throws Exception {
-    NewEmployeeDTO newEmployeeDTO = new NewEmployeeDTO("vasil", "ivanov", "asd@asdasd.com", "asd");
+    NewUserDTO newUserDTO = new NewUserDTO("vasil", "ivanov", "asd@asdasd.com", "asd");
 
-    String requestBody = objectMapper.writeValueAsString(newEmployeeDTO);
+    String requestBody = objectMapper.writeValueAsString(newUserDTO);
     mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody))
@@ -64,7 +64,7 @@ public class EmployeeControllerTest {
   @Test
   public void testGetEmployeerReturnNotFound() throws Exception {
     int userId = -1;
-    Mockito.when(employeesService.findById(userId)).thenThrow(NotFoundException.class);
+    Mockito.when(usersService.findById(userId)).thenThrow(NotFoundException.class);
     mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT + "/" + userId)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -73,7 +73,7 @@ public class EmployeeControllerTest {
   @Test
   public void testGetEmployeerReturnOk() throws Exception {
     int employeeId = 2;
-    Mockito.when(employeesService.findById(2)).thenReturn(employee);
+    Mockito.when(usersService.findById(2)).thenReturn(employee);
     String requestBody = objectMapper.writeValueAsString(employee);
     mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT + "/" + employeeId)
                     .contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -83,10 +83,10 @@ public class EmployeeControllerTest {
   @Test
   public void testPutEmployersReturnNotFound() throws Exception {
     int employeeId = 2;
-    NewPutEmployeeDTO newPutEmployeeDTO = new NewPutEmployeeDTO("Vasil", "Ivanov", "vas@vas.com", "picture");
-    String requestBody = objectMapper.writeValueAsString(newPutEmployeeDTO);
+    NewPutUserDTO newPutUserDTO = new NewPutUserDTO("Vasil", "Ivanov", "vas@vas.com", "picture");
+    String requestBody = objectMapper.writeValueAsString(newPutUserDTO);
 
-    Mockito.when(employeesService.findByIdAndUpdate(2, newPutEmployeeDTO)).thenThrow(NotFoundException.class);
+    Mockito.when(usersService.findByIdAndUpdate(2, newPutUserDTO)).thenThrow(NotFoundException.class);
 
     mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT + "/" + employeeId)
             .contentType(MediaType.APPLICATION_JSON)
@@ -96,10 +96,10 @@ public class EmployeeControllerTest {
   @Test
   public void testPutEmployersReturnBadRequest() throws Exception {
     int employeeId = 2;
-    NewPutEmployeeDTO newPutEmployeeDTO = new NewPutEmployeeDTO("", "Ivanov", "vas@vas.com", "picture");
-    String requestBody = objectMapper.writeValueAsString(newPutEmployeeDTO);
+    NewPutUserDTO newPutUserDTO = new NewPutUserDTO("", "Ivanov", "vas@vas.com", "picture");
+    String requestBody = objectMapper.writeValueAsString(newPutUserDTO);
 
-    Mockito.when(employeesService.findByIdAndUpdate(2, newPutEmployeeDTO)).thenThrow(NotFoundException.class);
+    Mockito.when(usersService.findByIdAndUpdate(2, newPutUserDTO)).thenThrow(NotFoundException.class);
 
     mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT + "/" + employeeId)
             .contentType(MediaType.APPLICATION_JSON)
@@ -109,9 +109,9 @@ public class EmployeeControllerTest {
   @Test
   public void testPutEmployersReturn200() throws Exception {
     int employeeId = 2;
-    NewPutEmployeeDTO newPutEmployeeDTO = new NewPutEmployeeDTO("Vasil2", "Ivanovv", "vas@vas.com", "picture");
-    String requestBody = objectMapper.writeValueAsString(newPutEmployeeDTO);
-    Mockito.when(employeesService.findByIdAndUpdate(2, newPutEmployeeDTO)).thenReturn(employee);
+    NewPutUserDTO newPutUserDTO = new NewPutUserDTO("Vasil2", "Ivanovv", "vas@vas.com", "picture");
+    String requestBody = objectMapper.writeValueAsString(newPutUserDTO);
+    Mockito.when(usersService.findByIdAndUpdate(2, newPutUserDTO)).thenReturn(employee);
     mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT + "/" + employeeId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody)).andExpect(MockMvcResultMatchers.status().isOk());
@@ -120,7 +120,7 @@ public class EmployeeControllerTest {
   @Test
   public void testDeleteEmployersReturn404() throws Exception {
     int employeeId = 2;
-    Mockito.doThrow(NotFoundException.class).when(employeesService).findByIdAndDelete(2);
+    Mockito.doThrow(NotFoundException.class).when(usersService).findByIdAndDelete(2);
     mockMvc.perform(MockMvcRequestBuilders.delete(ENDPOINT + "/" + employeeId))
             .andExpect(MockMvcResultMatchers.status().isNotFound());
   }

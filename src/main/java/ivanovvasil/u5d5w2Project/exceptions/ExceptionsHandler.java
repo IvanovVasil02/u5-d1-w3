@@ -39,6 +39,13 @@ public class ExceptionsHandler {
     return new ErrorsResponseDTO(e.getMessage(), new Date());
   }
 
+  @ExceptionHandler(AnauthorizedException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ErrorsResponseDTO handleAnauthorized(AnauthorizedException e) {
+    e.printStackTrace();
+    return new ErrorsResponseDTO(e.getMessage(), new Date());
+  }
+
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorsResponseDTO handleGeneric(Exception e) {

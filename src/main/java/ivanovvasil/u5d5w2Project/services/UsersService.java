@@ -3,14 +3,14 @@ package ivanovvasil.u5d5w2Project.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import ivanovvasil.u5d5w2Project.entities.Device;
-import ivanovvasil.u5d5w2Project.entities.Employee;
+import ivanovvasil.u5d5w2Project.entities.User;
 import ivanovvasil.u5d5w2Project.enums.DeviceStatus;
 import ivanovvasil.u5d5w2Project.exceptions.BadRequestException;
 import ivanovvasil.u5d5w2Project.exceptions.NotFoundException;
-import ivanovvasil.u5d5w2Project.payloads.NewEmployeeDTO;
-import ivanovvasil.u5d5w2Project.payloads.NewPutEmployeeDTO;
+import ivanovvasil.u5d5w2Project.payloads.NewPutUserDTO;
+import ivanovvasil.u5d5w2Project.payloads.NewUserDTO;
 import ivanovvasil.u5d5w2Project.repositories.DevicesRepository;
-import ivanovvasil.u5d5w2Project.repositories.EmployeesRepository;
+import ivanovvasil.u5d5w2Project.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,72 +23,76 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class EmployeesService {
+public class UsersService {
   @Autowired
-  private EmployeesRepository employeesRepository;
+  private UsersRepository usersRepository;
   @Autowired
   private DevicesRepository devicesRepository;
   @Autowired
   private Cloudinary cloudinary;
 
   //findALl for employees runner
-  public Employee saveRunnerEmployee(Employee employee) {
-    return employeesRepository.save(employee);
+  public User saveRunnerEmployee(User user) {
+    return usersRepository.save(user);
   }
 
-  public Employee save(NewEmployeeDTO body) throws IOException {
-    employeesRepository.findByEmail(body.email()).ifPresent(author -> {
+  public User save(NewUserDTO body) throws IOException {
+    usersRepository.findByEmail(body.email()).ifPresent(author -> {
       throw new BadRequestException("The email  " + author.getEmail() + " is already used!");
     });
-    Employee newEmployee = new Employee();
-    newEmployee.setName(body.name());
-    newEmployee.setSurname(body.surname());
-    newEmployee.setEmail(body.email());
+    User newUser = new User();
+    newUser.setName(body.name());
+    newUser.setSurname(body.surname());
+    newUser.setEmail(body.email());
     if (body.profilePicture() != null) {
-      newEmployee.setProfilePicture(body.profilePicture());
+      newUser.setProfilePicture(body.profilePicture());
     } else {
-      newEmployee.setProfilePicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTC0HlQ_ckX6HqCAlqroocyRDx_ZRu3x3ezoA&usqp=CAU");
+      newUser.setProfilePicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTC0HlQ_ckX6HqCAlqroocyRDx_ZRu3x3ezoA&usqp=CAU");
     }
-    return employeesRepository.save(newEmployee);
+    return usersRepository.save(newUser);
   }
 
   //findALl for employees runner
-  public List<Employee> findAll() {
-    return employeesRepository.findAll();
+  public List<User> findAll() {
+    return usersRepository.findAll();
   }
 
-  public Page<Employee> findAll(int page, int size, String orderBy) {
+  public Page<User> findAll(int page, int size, String orderBy) {
     Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
-    return employeesRepository.findAll(pageable);
+    return usersRepository.findAll(pageable);
   }
 
-  public Employee findById(int id) throws NotFoundException {
-    return employeesRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+  public User findById(int id) throws NotFoundException {
+    return usersRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+  }
+
+  public User findByEmail(String email) {
+    return usersRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("No user found with this email: " + email));
   }
 
   public void findByIdAndDelete(int id) throws NotFoundException {
     List<Device> devicesList = devicesRepository.findAllByEmployeeId(id);
     devicesList.forEach(device -> {
       device.setDeviceStatus(DeviceStatus.AVAILABLE);
-      device.setEmployee(null);
+      device.setUser(null);
       devicesRepository.save(device);
     });
-    employeesRepository.delete(this.findById(id));
+    usersRepository.delete(this.findById(id));
   }
 
-  public Employee findByIdAndUpdate(int id, NewPutEmployeeDTO body) throws IOException {
-    Employee found = this.findById(id);
+  public User findByIdAndUpdate(int id, NewPutUserDTO body) throws IOException {
+    User found = this.findById(id);
     found.setName(body.name());
     found.setSurname(body.surname());
     found.setEmail(body.email());
-    return employeesRepository.save(found);
+    return usersRepository.save(found);
   }
 
-  public Employee uploadImg(int id, MultipartFile file) throws IOException {
-    Employee found = this.findById(id);
+  public User uploadImg(int id, MultipartFile file) throws IOException {
+    User found = this.findById(id);
     String urlImg = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
     found.setProfilePicture(urlImg);
-    employeesRepository.save(found);
+    usersRepository.save(found);
     return found;
   }
 }

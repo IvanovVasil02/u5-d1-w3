@@ -27,14 +27,14 @@ public class Device {
   private DeviceStatus deviceStatus;
   @ManyToOne
   @JoinColumn(name = "employee_id")
-  private Employee employee;
+  private User user;
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Device device = (Device) o;
-    return id == device.id && deviceType == device.deviceType && Objects.equals(Model, device.Model) && deviceStatus == device.deviceStatus && Objects.equals(employee, device.employee);
+    return id == device.id && deviceType == device.deviceType && Objects.equals(Model, device.Model) && deviceStatus == device.deviceStatus && Objects.equals(user, device.user);
   }
 
   public static class DeviceBuilder {
