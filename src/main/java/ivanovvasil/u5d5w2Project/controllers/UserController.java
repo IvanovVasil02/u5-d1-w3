@@ -3,9 +3,7 @@ package ivanovvasil.u5d5w2Project.controllers;
 import ivanovvasil.u5d5w2Project.entities.User;
 import ivanovvasil.u5d5w2Project.exceptions.BadRequestException;
 import ivanovvasil.u5d5w2Project.payloads.NewPutUserDTO;
-import ivanovvasil.u5d5w2Project.payloads.NewUserDTO;
 import ivanovvasil.u5d5w2Project.services.UsersService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,19 +21,6 @@ public class UserController {
   @Autowired
   private UsersService usersService;
 
-  @PostMapping("")
-  @ResponseStatus(HttpStatus.CREATED)
-  public User saveEmployee(@RequestBody @Validated @Valid NewUserDTO body, BindingResult validation) {
-    if (validation.hasErrors()) {
-      throw new BadRequestException("Empty or not respected fields", validation.getAllErrors());
-    } else {
-      try {
-        return usersService.save(body);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
 
   @GetMapping("")
   public Page<User> getAll(@RequestParam(defaultValue = "0") int page,
